@@ -1244,7 +1244,7 @@ func makeMounts(pod *api.Pod, podDir string, container *api.Container, podVolume
 		mounts = append(mounts, kubecontainer.Mount{
 			Name:           mount.Name,
 			ContainerPath:  mount.MountPath,
-			HostPath:       vol.Builder.GetPath(),
+			HostPath:       path.Join(vol.Builder.GetPath(), mount.SourcePath),
 			ReadOnly:       mount.ReadOnly,
 			SELinuxRelabel: relabelVolume,
 		})

@@ -691,25 +691,31 @@ func TestMakeVolumeMounts(t *testing.T) {
 	container := api.Container{
 		VolumeMounts: []api.VolumeMount{
 			{
-				MountPath: "/etc/hosts",
-				Name:      "disk",
-				ReadOnly:  false,
+				MountPath:  "/etc/hosts",
+				Name:       "disk",
+				ReadOnly:   false,
 			},
 			{
-				MountPath: "/mnt/path3",
-				Name:      "disk",
-				ReadOnly:  true,
+				MountPath:  "/mnt/path3",
+				Name:       "disk",
+				ReadOnly:   true,
 			},
 			{
-				MountPath: "/mnt/path4",
-				Name:      "disk4",
-				ReadOnly:  false,
+				MountPath:  "/mnt/path4",
+				Name:       "disk4",
+				ReadOnly:   false,
 			},
 			{
-				MountPath: "/mnt/path5",
-				Name:      "disk5",
-				ReadOnly:  false,
+				MountPath:  "/mnt/path5",
+				Name:       "disk5",
+				ReadOnly:   false,
 			},
+			{
+				MountPath:  "/mnt/path6",
+				SourcePath: "source/path",
+				Name:       "disk6",
+				ReadOnly:   false
+			}
 		},
 	}
 
@@ -717,6 +723,7 @@ func TestMakeVolumeMounts(t *testing.T) {
 		"disk":  kubecontainer.VolumeInfo{Builder: &stubVolume{path: "/mnt/disk"}},
 		"disk4": kubecontainer.VolumeInfo{Builder: &stubVolume{path: "/mnt/host"}},
 		"disk5": kubecontainer.VolumeInfo{Builder: &stubVolume{path: "/var/lib/kubelet/podID/volumes/empty/disk5"}},
+		"disk6": kubecontainer.VolumeInfo{Builder: &stubVolume{path: "/var/lib/kubelet/podID/volumes/empty/disk6"}},
 	}
 
 	pod := api.Pod{
@@ -758,6 +765,13 @@ func TestMakeVolumeMounts(t *testing.T) {
 			false,
 			false,
 		},
+		{
+			"disk6",
+			"/mnt/path6",
+			"/var/lib/kubelet/podID/volumes/empty/disk6/source/path",
+			false,
+			false
+		}
 	}
 	if !reflect.DeepEqual(mounts, expectedMounts) {
 		t.Errorf("Unexpected mounts: Expected %#v got %#v.  Container was: %#v", expectedMounts, mounts, container)
